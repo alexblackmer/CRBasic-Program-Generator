@@ -1,3 +1,4 @@
 *.CR1X
 *.tdf
-*/Programs/
+./Programs/
+./build/
