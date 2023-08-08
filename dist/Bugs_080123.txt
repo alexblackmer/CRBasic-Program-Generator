@@ -1,0 +1,9 @@
+1. When selecting Legacy/HMP60 thermometer type, code for theremometer in "Main Program" section is missing.
+2. When selecting HygroVUE..., Header Info comment line does not include "'HygroVUE")
+
+Additions:
+SnowVue
+Code for a CS320 pyranometer (would need another drop down)
+CR1000 and CR300 code...
+
+Test 3: HD anemometer, HygroVUE, ComSDC7 Vaisala, 108, SR50
