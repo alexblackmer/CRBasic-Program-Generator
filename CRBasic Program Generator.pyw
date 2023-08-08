@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import ttk
 import sys
+import os
 
 # CRBasic Program Generator (GUI).py
 # A script to output RWIS programs depending on user input as to what sensors are at a site.
@@ -21,6 +22,7 @@ import sys
 class StationGui:
     # Constructor function
     def __init__(self):
+        self.path = "./Programs/"
         # create root window
         self.root = Tk()
         # root window title and dimension
@@ -67,7 +69,7 @@ class StationGui:
         self.temp_var = StringVar()
         temp_l = Label(self.root, text="Thermometer Type").grid(row=5, column=0)
         temp_cb = ttk.Combobox(self.root, textvariable=self.temp_var)
-        temp_cb['values'] = ('Legacy/HMP60', 'CS215-in-datalogger', 'CS215-in-CS125', 'HygroVue5/10')
+        temp_cb['values'] = ('Legacy/HMP60', 'CS215-in-datalogger', 'CS215-in-CS125', 'HygroVUE5/10')
         temp_cb.grid(row=5, column=1)
 
         # Road Sensor
@@ -207,13 +209,16 @@ class StationGui:
 
     # Creates CRBasic program
     def __generate_program(self):
+        # Checks if Program folder exists, creates if not
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         month = self.date[0:2]
         day = self.date[2:4]
         year = self.date[4:6]
         # BEGIN WRITING CR1000X PROGRAM---------------------------------------------------------------------
         if self.logger_type == "CR1000X":
             filename = "{0}_{1}_Auto.CR1X".format(self.site_name, self.date)
-            CR1X_file = open(filename, "w")
+            CR1X_file = open(self.path + filename, "w")
 
             # HEADER INFO------------------
             CR1X_file.writelines(
@@ -774,8 +779,8 @@ class StationGui:
                 CR1X_file.writelines("\n\n  'No subprobe:")
                 CR1X_file.writelines("\n  Ground_18in_Temp_f = \"NAN\"")
             # Legacy and CS215 Thermometers
-            if self.temp == "Legacy" or self.temp == "CS215-in-datalogger" or self.temp == "CS215-in-CS125":
-                if self.temp == "Legacy":
+            if self.temp == "Legacy/HMP60" or self.temp == "CS215-in-datalogger" or self.temp == "CS215-in-CS125":
+                if self.temp == "Legacy/HMP60":
                     CR1X_file.writelines(
                         "\n\n  'Rotronic, EE181, or HMP45C Temp/RH Sensor Measurements Air_Temp_f and RH_Percent:")
                     CR1X_file.writelines("\n  VoltSe (Air_Temp_f,1,mV1000,3,0,0,_60Hz,0.18,-40.0)")
@@ -865,7 +870,7 @@ class StationGui:
                 CR1X_file.writelines("\n\nNextScan")
 
             # 10-Second Section (HygroVUE, SR-50, DSC/DST, CS125)
-            if self.Snow== "SR50" or self.Snow== "SnowVue" or self.RS == "Vaisala" or self.CS125 == 1 or self.temp == "HygroVue5/10":
+            if self.Snow== "SR50" or self.Snow== "SnowVue" or self.RS == "Vaisala" or self.CS125 == 1 or self.temp == "HygroVUE5/10":
                 CR1X_file.writelines("\n\nSlowSequence")
                 CR1X_file.writelines("\n\nScan (10,Sec,0,0)")
                 # HygroVUE
@@ -1067,7 +1072,7 @@ class StationGui:
         # BEGIN WRITING CR1000 PROGRAM-----------------------------------------------------------------------------------------
         if self.logger_type == "CR1000":
             filename = "{0}_{1}_Auto.CR1".format(self.site_name, self.date)
-            CR1_file = open(filename, "w")
+            CR1_file = open(self.path + filename, "w")
 
             # HEADER INFO--------------------
             CR1_file.writelines(
@@ -1083,7 +1088,7 @@ class StationGui:
         # BEGIN WRITING CR300 PROGRAM------------------------------------------------------------------------------------------
         if self.logger_type == "CR3XX":
             filename = "{0}_{1}_Auto.CR300".format(self.site_name, self.date)
-            CR300_file = open(filename, "w")
+            CR300_file = open(self.path + filename, "w")
 
             # HEADER INFO------------------
             CR300_file.writelines(
@@ -1269,3 +1274,4 @@ class StationGui:
 if __name__ == "__main__":
     sGui = StationGui()
     sGui.validate()
+
